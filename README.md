@@ -25,6 +25,7 @@ depth and practical relevance to Canadian industry needs in 2026.
 
 ## Proposed Folder Structure (Draft only)
 
+```
 Neural-Net-Grp-Prj/
 ├── README.md
 ├── .gitignore
@@ -66,3 +67,4 @@ Neural-Net-Grp-Prj/
     ├── architecture.md
     ├── dataflow-diagram.png
     └── api-spec.yaml
+```
