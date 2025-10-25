@@ -22,3 +22,47 @@ component-based architecture in frontend, API service abstraction) to ensure mai
 
 The end result should be a working prototype of an AI-enabled application that demonstrates both technical
 depth and practical relevance to Canadian industry needs in 2026.
+
+## Proposed Folder Structure (Draft only)
+
+Neural-Net-Grp-Prj/
+├── README.md
+├── .gitignore
+├── backend/                  # Flask API + TensorFlow + Gemini
+│   ├── app.py                # Flask app entry point
+│   ├── requirements.txt      # Backend dependencies
+│   ├── config.py             # Configuration (API keys, paths)
+│   ├── ml/
+│   │   ├── model.py          # TensorFlow/Keras model definition
+│   │   ├── train.py          # Training script
+│   │   └── utils.py          # Helper functions (data loading, preprocessing)
+│   ├── routes/
+│   │   ├── ai_routes.py      # Endpoints for AI features (predict, summarize, chat)
+│   │   └── __init__.py
+│   ├── services/
+│   │   ├── gemini_service.py # Wrapper for Gemini API calls
+│   │   └── __init__.py
+│   ├── static/               # Optional: serve static files if needed
+│   └── templates/            # Optional: Jinja templates if using server-side pages
+│
+├── frontend/                 # React 19 + Vite frontend
+│   ├── package.json
+│   ├── vite.config.js
+│   ├── src/
+│   │   ├── App.jsx
+│   │   ├── components/
+│   │   │   ├── Navbar.jsx
+│   │   │   ├── PredictionForm.jsx
+│   │   │   └── Chatbot.jsx
+│   │   ├── pages/
+│   │   │   ├── HomePage.jsx
+│   │   │   ├── ResultsPage.jsx
+│   │   └── services/
+│   │       └── api.js        # Axios or Fetch abstraction for backend calls
+│   └── public/
+│       └── index.html
+│
+└── docs/                     # Documentation or design diagrams
+    ├── architecture.md
+    ├── dataflow-diagram.png
+    └── api-spec.yaml
