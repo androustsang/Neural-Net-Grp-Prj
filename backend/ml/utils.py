@@ -26,10 +26,10 @@ def parse_annotations(txt_path, images_root):
 
     return pd.DataFrame(rows)
 
-df_train = parse_annotations("backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train/_annotations.txt", "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train")
-df_val = parse_annotations("backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid/_annotations.txt", "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid")
-df_test = parse_annotations("backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test/_annotations.txt", "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test")
-print(df_train.head())
+# df_train = parse_annotations("backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train/_annotations.txt", "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train")
+# df_val = parse_annotations("backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid/_annotations.txt", "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid")
+# df_test = parse_annotations("backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test/_annotations.txt", "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test")
+
 
 class ClassifierDataset(Dataset):
     def __init__(self, txt_path, images_root, img_size=(640, 640)):

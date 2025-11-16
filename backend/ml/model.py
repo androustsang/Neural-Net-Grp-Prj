@@ -1,32 +1,63 @@
-from utils import ClassifierDataset, HolesRecognitionDataset
 import pandas as pd
 import os
 import cv2
 import numpy as np
-import torch
 from torch.utils.data import Dataset, DataLoader
 from torchvision import models
-import torch.nn as nn
 import torch.optim as optim
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
 
-shape = [640,640,3]
+class CNNClassifier(nn.Module):
+    def __init__(self):
+        super().__init__()
 
-train_dataset_classifier = ClassifierDataset(txt_path= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train/_annotations.txt",images_root= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train", img_size= shape)
-val_dataset_classifier = ClassifierDataset(txt_path= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid/_annotations.txt",images_root= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid", img_size= shape)
-test_dataset_classifier = ClassifierDataset(txt_path= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test/_annotations.txt",images_root= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test", img_size= shape)
+        # He normal initializer function
+        def kaiming(layer):
+            if isinstance(layer, nn.Conv2d) or isinstance(layer, nn.Linear):
+                nn.init.kaiming_normal_(layer.weight, nonlinearity="relu")
+                if layer.bias is not None:
+                    nn.init.zeros_(layer.bias)
 
-train_loader_classifier = DataLoader(train_dataset_classifier, batch_size=8, shuffle=True)
-val_loader_classifier = DataLoader(val_dataset_classifier, batch_size=8, shuffle=True)
-test_loader_classifier = DataLoader(test_dataset_classifier, batch_size=8, shuffle=True)
+        # Build layers
+        self.conv1 = nn.Conv2d(3, 32, kernel_size=7, padding=3)
+        self.conv2 = nn.Conv2d(32, 64, kernel_size=3, padding=1)
+        self.conv3 = nn.Conv2d(64, 64, kernel_size=3, padding=1)
 
-train_dataset_recognition = HolesRecognitionDataset(txt_path= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train/_annotations.txt",images_root= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/train", img_size= shape)
-val_dataset_recognition = HolesRecognitionDataset(txt_path= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid/_annotations.txt",images_root= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/valid", img_size= shape)
-test_dataset_recognition = HolesRecognitionDataset(txt_path= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test/_annotations.txt",images_root= "backend/ml/data/Dash Cam pothole Detection.v2i.yolokeras/test", img_size= shape)
+        self.conv4 = nn.Conv2d(64, 128, kernel_size=3, padding=1)
+        self.conv5 = nn.Conv2d(128, 128, kernel_size=3, padding=1)
 
-train_loader_recognition = DataLoader(train_dataset_recognition, batch_size=8, shuffle=True)
-val_loader_recognition = DataLoader(val_dataset_recognition, batch_size=8, shuffle=True)
-test_loader_recognition = DataLoader(test_dataset_recognition, batch_size=8, shuffle=True)
+        self.pool = nn.MaxPool2d(2)
 
-print(type(train_loader_classifier))
-print(train_loader_classifier)
+        # Dense layers
+        self.fc1 = nn.Linear(128 * 28 * 28, 64)  # Because 640→320→160→80 after three pools and 224→112→56→28 
+        self.fc2 = nn.Linear(64, 32)
+        self.fc3 = nn.Linear(32, 1)
+
+        # Apply He initialization
+        self.apply(kaiming)
+
+    def forward(self, x):
+        # Conv block 1
+        x = F.relu(self.conv1(x))
+        x = self.pool(x)
+
+        # Conv block 2
+        x = F.relu(self.conv2(x))
+        x = F.relu(self.conv3(x))
+        x = self.pool(x)
+
+        # Conv block 3
+        x = F.relu(self.conv4(x))
+        x = F.relu(self.conv5(x))
+        x = self.pool(x)
+
+        x = torch.flatten(x, 1)
+        x = F.relu(self.fc1(x))
+        x = F.dropout(x, p=0.5, training=self.training)
+        x = F.relu(self.fc2(x))
+        x = F.dropout(x, p=0.5, training=self.training)
+
+        return self.fc3(x)
 
