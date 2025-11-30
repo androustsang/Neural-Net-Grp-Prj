@@ -31,7 +31,7 @@ class CNNClassifier(nn.Module):
         self.pool = nn.MaxPool2d(2)
 
         # Dense layers
-        self.fc1 = nn.Linear(128 * 28 * 28, 64)  # Because 640→320→160→80 after three pools and 224→112→56→28 
+        self.fc1 = nn.Linear(128 * 80 * 80, 64)  
         self.fc2 = nn.Linear(64, 32)
         self.fc3 = nn.Linear(32, 1)
 
