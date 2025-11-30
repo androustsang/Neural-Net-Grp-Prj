@@ -1,0 +1,344 @@
+/* RAG Chat Container */
+.ragchat-container {
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen", "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue", sans-serif;
+    background: linear-gradient(135deg, #1e40af 0%, #0f766e 100%);
+    color: #f1f5f9;
+    max-width: 900px;
+    margin: 0 auto;
+    height: 70vh;
+    max-height: 700px;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Header */
+.ragchat-header {
+    padding: 1.25rem 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+}
+
+.ragchat-header h1 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: 700;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+/* Messages Container */
+.ragchat-messages {
+    flex: 1;
+    padding: 1.5rem;
+    overflow-y: auto;
+    background: rgba(255, 255, 255, 0.03);
+}
+
+.ragchat-messages::-webkit-scrollbar {
+    width: 8px;
+}
+
+.ragchat-messages::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 4px;
+}
+
+.ragchat-messages::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    border-radius: 4px;
+}
+
+.ragchat-messages::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
+}
+
+/* Message Bubbles */
+.ragchat-message {
+    margin-bottom: 1rem;
+    max-width: 85%;
+    padding: 1rem 1.25rem;
+    border-radius: 16px;
+    animation: fadeIn 0.3s ease-in;
+    line-height: 1.6;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.ragchat-message.user {
+    margin-left: auto;
+    background: rgba(255, 255, 255, 0.95);
+    color: #1e293b;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.ragchat-message.assistant {
+    margin-right: auto;
+    background: rgba(255, 255, 255, 0.12);
+    color: #f8fafc;
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(10px);
+}
+
+.ragchat-meta {
+    font-size: 0.75rem;
+    opacity: 0.8;
+    margin-bottom: 0.5rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+.ragchat-message.user .ragchat-meta {
+    color: #475569;
+}
+
+.ragchat-message.assistant .ragchat-meta {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+/* Context Details */
+.ragchat-details {
+    margin-top: 1rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.25);
+    padding-top: 0.75rem;
+}
+
+.ragchat-summary {
+    cursor: pointer;
+    font-size: 0.85rem;
+    color: rgba(255, 255, 255, 0.8);
+    user-select: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    padding: 0.5rem 0.75rem;
+    border-radius: 6px;
+    background: rgba(255, 255, 255, 0.1);
+}
+
+.ragchat-summary:hover {
+    color: rgba(255, 255, 255, 0.95);
+    background: rgba(255, 255, 255, 0.15);
+}
+
+.ragchat-context-box {
+    margin-top: 0.5rem;
+    background: rgba(0, 0, 0, 0.3);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    font-size: 0.8rem;
+    font-family: "SF Mono", "Monaco", "Inconsolata", "Roboto Mono", "Source Code Pro", monospace;
+    white-space: pre-wrap;
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #e2e8f0;
+    line-height: 1.5;
+}
+
+/* Sources */
+.ragchat-sources {
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    border-top: 1px dashed rgba(255, 255, 255, 0.25);
+    padding-top: 0.75rem;
+    color: rgba(255, 255, 255, 0.9);
+}
+
+.ragchat-sources ul {
+    padding-left: 1.25rem;
+    margin: 0.5rem 0 0;
+}
+
+.ragchat-sources li {
+    margin-bottom: 0.5rem;
+    line-height: 1.4;
+}
+
+.ragchat-sources a {
+    color: #7dd3fc;
+    text-decoration: none;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    border-bottom: 1px solid transparent;
+}
+
+.ragchat-sources a:hover {
+    color: #bae6fd;
+    border-bottom-color: #7dd3fc;
+}
+
+/* Error and Loading States */
+.ragchat-error {
+    margin-top: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: rgba(239, 68, 68, 0.9);
+    color: white;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ragchat-loading {
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    background: rgba(255, 255, 255, 0.15);
+    color: white;
+    width: fit-content;
+    font-size: 0.95rem;
+    margin: 0.5rem 0 0 0;
+    font-weight: 500;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Form */
+.ragchat-form {
+    display: flex;
+    gap: 0.75rem;
+    padding: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.15);
+    background: rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(10px);
+}
+
+.ragchat-input {
+    flex: 1;
+    padding: 0.75rem 1.25rem;
+    border-radius: 999px;
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    background: rgba(255, 255, 255, 0.12);
+    color: white;
+    font-size: 1rem;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+}
+
+.ragchat-input::placeholder {
+    color: rgba(255, 255, 255, 0.6);
+}
+
+.ragchat-input:focus {
+    outline: none;
+    border-color: rgba(255, 255, 255, 0.4);
+    background: rgba(255, 255, 255, 0.18);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.1);
+}
+
+.ragchat-input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+.ragchat-button {
+    padding: 0.75rem 2rem;
+    border-radius: 999px;
+    border: none;
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+    color: white;
+    font-weight: 600;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 8px rgba(37, 99, 235, 0.3);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.ragchat-button:hover:not(:disabled) {
+    background: linear-gradient(135deg, #1d4ed8 0%, #1e40af 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.4);
+}
+
+.ragchat-button:active:not(:disabled) {
+    transform: translateY(0);
+    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.3);
+}
+
+.ragchat-button:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    background: #64748b;
+    box-shadow: none;
+}
+
+/* Typing Indicator */
+.ragchat-typing {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.5rem 0;
+}
+
+.ragchat-typing-dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.6);
+    animation: typingBounce 1.4s infinite ease-in-out;
+}
+
+.ragchat-typing-dot:nth-child(1) {
+    animation-delay: -0.32s;
+}
+
+.ragchat-typing-dot:nth-child(2) {
+    animation-delay: -0.16s;
+}
+
+@keyframes typingBounce {
+
+    0%,
+    80%,
+    100% {
+        transform: scale(0.8);
+        opacity: 0.5;
+    }
+
+    40% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* Animations */
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Responsive Design */
+@media (max-width: 768px) {
+    .ragchat-container {
+        height: 80vh;
+        max-height: none;
+        margin: 0.5rem;
+        border-radius: 8px;
+    }
+
+    .ragchat-message {
+        max-width: 90%;
+        padding: 0.875rem 1rem;
+    }
+
+    .ragchat-form {
+        padding: 1rem;
+    }
+
+    .ragchat-input {
+        padding: 0.625rem 1rem;
+    }
+
+    .ragchat-button {
+        padding: 0.625rem 1.5rem;
+    }
+}

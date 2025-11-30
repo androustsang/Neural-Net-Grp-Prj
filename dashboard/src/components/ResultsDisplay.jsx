@@ -1,19 +1,18 @@
-import React from 'react';
-import { Card, Row, Col, Spinner, Alert, Table, ProgressBar, Badge } from 'react-bootstrap';
+import { Card, Spinner, Alert, Badge } from "react-bootstrap"
 
 export default function ResultsDisplay({ results, loading, error }) {
   if (loading) {
     return (
       <Card className="fade-in">
         <Card.Body className="text-center py-5">
-          <Spinner animation="border" role="status" style={{ width: '3rem', height: '3rem' }}>
+          <Spinner animation="border" role="status" style={{ width: "3rem", height: "3rem" }}>
             <span className="visually-hidden">Loading results...</span>
           </Spinner>
-          <p className="mt-3 text-muted fs-5">Analyzing your input...</p>
+          <p className="mt-3 text-muted fs-5">Analyzing image for potholes...</p>
           <p className="text-muted small">This may take a few moments</p>
         </Card.Body>
       </Card>
-    );
+    )
   }
 
   if (error) {
@@ -22,82 +21,80 @@ export default function ResultsDisplay({ results, loading, error }) {
         <Alert.Heading>❌ Error</Alert.Heading>
         <p>{error}</p>
       </Alert>
-    );
+    )
   }
 
   if (!results) {
     return (
       <Alert variant="info" className="fade-in" role="status">
         <div className="text-center py-3">
-          <p className="fs-5 mb-2">👈 Submit data to see prediction results</p>
-          <p className="text-muted small mb-0">Fill out the form and click submit to get started</p>
+          <p className="fs-5 mb-2">👆 Upload an image to detect potholes</p>
+          <p className="text-muted small mb-0">Select an image of a road surface and click detect</p>
         </div>
       </Alert>
-    );
+    )
   }
 
   return (
     <Card className="fade-in">
-      <Card.Header as="h5">📊 Prediction Results</Card.Header>
+      <Card.Header as="h5" className="d-flex justify-content-between align-items-center">
+        <span>{results.hasPothole ? "🔴 Pothole Detected!" : "✅ No Potholes Detected"}</span>
+        <Badge bg="light" text="dark" className="fs-6">
+          {(results.confidence * 100).toFixed(1)}% Confidence
+        </Badge>
+      </Card.Header>
       <Card.Body>
-        <Row className="mb-4">
-          <Col md={6}>
-            <div className="text-center p-4 bg-light rounded-3 shadow-sm">
-              <h6 className="text-muted mb-3">Prediction</h6>
-              <h2 className="gradient-text fw-bold mb-0">{results.prediction}</h2>
-              <Badge bg="primary" className="mt-2">Primary Prediction</Badge>
-            </div>
-          </Col>
-          <Col md={6}>
-            <div className="text-center p-4 bg-light rounded-3 shadow-sm">
-              <h6 className="text-muted mb-3">Confidence Level</h6>
-              <h2 className="text-success fw-bold mb-3">
-                {(results.confidence * 100).toFixed(1)}%
-              </h2>
-              <ProgressBar 
-                now={results.confidence * 100} 
-                variant="success"
-                aria-label={`Confidence level: ${(results.confidence * 100).toFixed(1)}%`}
-                className="shadow-sm"
-                style={{ height: '20px' }}
-              />
-            </div>
-          </Col>
-        </Row>
-
-        <hr className="my-4" />
-
-        <h6 className="mb-3 fw-semibold">📈 Class Probabilities</h6>
-        <Table striped hover responsive className="shadow-sm">
-          <thead>
-            <tr>
-              <th>Class</th>
-              <th>Probability</th>
-              <th width="50%">Distribution</th>
-            </tr>
-          </thead>
-          <tbody>
-            {Object.entries(results.probabilities).map(([cls, prob]) => (
-              <tr key={cls}>
-                <td className="fw-semibold">{cls}</td>
-                <td>
-                  <Badge bg={prob > 0.5 ? 'success' : 'secondary'}>
-                    {(prob * 100).toFixed(2)}%
-                  </Badge>
-                </td>
-                <td>
-                  <ProgressBar 
-                    now={prob * 100} 
-                    variant={prob > 0.5 ? 'success' : 'secondary'}
-                    aria-label={`${cls} probability: ${(prob * 100).toFixed(2)}%`}
-                    style={{ height: '25px' }}
-                  />
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </Table>
+        {results.hasPothole ? (
+          <>
+            <Alert variant="warning" className="mb-3">
+              <strong>⚠️ Attention:</strong> One or more potholes have been detected in this image.
+            </Alert>
+            {(results.annotatedImage || results.originalImage) && (
+              <div className="text-center">
+                <p className="text-muted mb-2">
+                  <small>
+                    <Badge bg="secondary" className="me-2">Demo Mode</Badge>
+                    Uploaded image displayed below (bounding box visualization requires backend)
+                  </small>
+                </p>
+                <img
+                  src={results.annotatedImage ? `data:image/jpeg;base64,${results.annotatedImage}` : results.originalImage}
+                  alt="Analyzed road surface"
+                  style={{
+                    width: "100%",
+                    maxHeight: "600px",
+                    objectFit: "contain",
+                    borderRadius: "8px"
+                  }}
+                  className="shadow-sm"
+                />
+              </div>
+            )}
+          </>
+        ) : (
+          <>
+            <Alert variant="success" className="mb-3">
+              <Alert.Heading>✅ All Clear!</Alert.Heading>
+              <p className="mb-0">No potholes were detected in this image. The road surface appears to be in good condition.</p>
+            </Alert>
+            {results.originalImage && (
+              <div className="text-center">
+                <img
+                  src={results.originalImage}
+                  alt="Analyzed road surface"
+                  style={{
+                    width: "100%",
+                    maxHeight: "600px",
+                    objectFit: "contain",
+                    borderRadius: "8px"
+                  }}
+                  className="shadow-sm"
+                />
+              </div>
+            )}
+          </>
+        )}
       </Card.Body>
     </Card>
-  );
+  )
 }
