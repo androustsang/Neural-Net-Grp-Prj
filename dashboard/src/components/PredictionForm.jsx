@@ -82,8 +82,8 @@ export default function PredictionForm({ onSubmit, loading }) {
                   <div
                     style={{
                       position: "absolute",
-                      border: "3px solid #00ff00",
-                      backgroundColor: "rgba(0, 255, 0, 0.2)",
+                      border: "3px solid #ff0000ff",
+                      backgroundColor: "rgba(255, 0, 0, 0.2)",
                       left: `${(box.x / 640) * imgRef.current.clientWidth}px`,
                       top: `${(box.y / 640) * imgRef.current.clientHeight}px`,
                       width: `${(box.w / 640) * imgRef.current.clientWidth}px`,
