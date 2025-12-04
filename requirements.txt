@@ -10,3 +10,4 @@ sentence-transformers
 langgraph
 langchain-google-genai
 google-genai
+dotenv
