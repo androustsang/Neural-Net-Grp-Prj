@@ -12,29 +12,40 @@ export default function PotholeDetector() {
         setLoading(true)
         setError(null)
 
-        // Simulate processing delay
-        setTimeout(() => {
-            // Randomly determine if pothole is detected (70% chance of detection)
-            const hasPothole = Math.random() > 0.3
+        try {
+            const formData = new FormData()
+            formData.append("image", imageFile)
 
-            // Random confidence between 75% and 95%
-            const confidence = 0.75 + Math.random() * 0.2
+            const response = await fetch("/api/predict", {
+                method: "POST",
+                body: formData,
+            })
 
-            // Convert uploaded image to base64 for display
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}))
+                throw new Error(errorData.error || `Server error: ${response.status}`)
+            }
+
+            const data = await response.json()
+
+            // Read the original image for display
             const reader = new FileReader()
             reader.onloadend = () => {
-                const base64Image = reader.result.split(',')[1]
-
                 setResults({
-                    hasPothole: hasPothole,
-                    annotatedImage: hasPothole ? base64Image : null,
-                    confidence: confidence,
+                    hasPothole: data.prediction === "pothole",
+                    annotatedImage: null, // Backend doesn't return annotated image yet
+                    confidence: data.confidence,
                     originalImage: reader.result,
                 })
                 setLoading(false)
             }
             reader.readAsDataURL(imageFile)
-        }, 2000)
+
+        } catch (err) {
+            console.error("Prediction error:", err)
+            setError(err.message || "Failed to get prediction")
+            setLoading(false)
+        }
     }
 
     return (
