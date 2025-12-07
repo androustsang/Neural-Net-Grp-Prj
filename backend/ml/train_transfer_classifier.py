@@ -404,49 +404,58 @@ def main():
     class_weights = [sum(class_counts) / c for c in class_counts]
     sample_weights = [class_weights[int(v)] for v in train_labels_list]
     sampler = WeightedRandomSampler(weights=sample_weights, num_samples=len(sample_weights), replacement=True)
-
+    print("Making Wrapping")
     # transforms & wrapped datasets
+    print("Making transformers")
     train_tfms, val_tfms = get_transforms(IMG_SIZE)
+    print("Making Wrepping training")
     train_ds = WrappedDataset(train_base, transform=train_tfms)
+    print("Making Wrepping val")
     val_ds = WrappedDataset(val_base, transform=val_tfms)
     test_ds = WrappedDataset(test_base, transform=val_tfms)
-
+    print("Data Loading")
     # dataloaders
+    print("Data Loading train")
     train_loader = DataLoader(train_ds, batch_size=BATCH_SIZE, sampler=sampler,
                               num_workers=num_workers, pin_memory=pin_memory, persistent_workers=persistent_workers)
+    print("Data Loading validation")
     val_loader = DataLoader(val_ds, batch_size=BATCH_SIZE, shuffle=False,
                             num_workers=num_workers, pin_memory=pin_memory, persistent_workers=persistent_workers)
     test_loader = DataLoader(test_ds, batch_size=BATCH_SIZE, shuffle=False,
                              num_workers=num_workers, pin_memory=pin_memory, persistent_workers=persistent_workers)
-
+    print("Model")
     # Build model
     model = build_model(BACKBONE, pretrained=PRETRAINED, feature_extract=FEATURE_EXTRACT)
     model.to(device)
-
+    print("Loss")
     # Loss
     pos_weight = torch.tensor((num_neg / max(1, num_pos)), dtype=torch.float32).to(device)
     if USE_FOCAL_LOSS:
         criterion = FocalLoss(alpha=FOCAL_ALPHA, gamma=FOCAL_GAMMA)
     else:
         criterion = nn.BCEWithLogitsLoss(pos_weight=pos_weight)
-
+    print("Optimizing")
     # Optimizer & scheduler
     optimizer = torch.optim.AdamW(filter(lambda p: p.requires_grad, model.parameters()), lr=LR, weight_decay=WEIGHT_DECAY)
     scheduler = torch.optim.lr_scheduler.ReduceLROnPlateau(optimizer, mode="min", factor=0.5, patience=LR_REDUCE_PATIENCE, verbose=True)
-
+    print("Scaler")
     # AMP scaler only if CUDA
     scaler = GradScaler() if device.type == "cuda" else None
-
+    print("Training")
     # training loop with early stopping & checkpointing
     best_val_f1 = -1.0
     no_improve = 0
     for epoch in range(1, EPOCHS + 1):
+        print(f"Epoch {epoch} starts")
         t0 = time.time()
         train_loss = train_one_epoch(model, train_loader, optimizer, criterion, device, scaler)
+        print(f"Epoch {epoch} trained")
         # Evaluate
+        print(f"Epoch {epoch} evaluation")
         val_acc, val_report, val_cm, y_val_true, y_val_probs = evaluate(model, val_loader, device)
         # compute val_loss for scheduler using criterion on logits
         model.eval()
+        print(f"Epoch {epoch} grads")
         with torch.no_grad():
             val_logits = []
             val_labels_arr = []
@@ -461,7 +470,7 @@ def main():
                 val_loss = float(nn.BCEWithLogitsLoss(pos_weight=pos_weight)(val_logits, val_labels_arr))
             else:
                 val_loss = float("nan")
-
+        print(f"Epoch {epoch} step")
         scheduler.step(val_loss if not math.isnan(val_loss) else 0.0)
 
         # threshold tuning
