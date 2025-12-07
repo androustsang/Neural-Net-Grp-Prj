@@ -1,6 +1,15 @@
+import os
+import torch
+import torch.nn as nn
+from torchvision import transforms
+from PIL import Image
+import numpy as np
+import cv2
 
 from flask import Blueprint, request, jsonify
 
+
+from ml.model import CNNClassifier
 
 # for Yehor and Maaz 
 # from ml.model import run_classification
@@ -8,6 +17,33 @@ from flask import Blueprint, request, jsonify
 
 ai_bp = Blueprint("ai_routes", __name__)
 
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "../ml/models/binary_classifier_weighted.pth"
+)
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model = CNNClassifier().to(device)
+
+if os.path.exists(MODEL_PATH):
+    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    model.eval()
+    print(f"Loaded trained classifier from {MODEL_PATH}")
+else:
+    print(f"MODEL NOT FOUND at {MODEL_PATH}")
+    
+def preprocess_numpy(np_img):
+    """
+    Input: numpy array BGR (from cv2)
+    Output: PyTorch tensor normalized & shaped like training data
+    """
+    img = cv2.resize(np_img, (224, 224))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = img.astype(np.float32) / 255.0
+    img = np.transpose(img, (2, 0, 1))
+    return torch.tensor(img, dtype=torch.float32).unsqueeze(0)
 
 @ai_bp.route("/predict", methods=["POST"])
 def predict():
@@ -31,14 +67,37 @@ def predict():
     # 2) Check if filename is not empty.
     if not file or file.filename == "":
         return jsonify({"error": "Empty file."}), 400
+    
+    try:
+        # Load image with OpenCV (your dataset uses cv2)
+        file_bytes = np.frombuffer(file.read(), np.uint8)
+        img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
-  
-    return jsonify(
-        {
-            "message": "Backend route is working. "
-                       "CNN prediction is not wired yet. (Yehor's part)"
-        }
-    ), 501  # 501 = Not Implemented
+        if img is None:
+            return jsonify({"error": "Invalid image format."}), 400
+
+        # Preprocess for model
+        tensor = preprocess_numpy(img).to(device)
+
+        # Inference
+        with torch.no_grad():
+            logits = model(tensor)
+            prob = torch.sigmoid(logits).item()
+            
+        print(prob)
+
+        pothole = prob >= 0.8
+        confidence = prob if pothole else (1 - prob)
+
+        return jsonify({
+            "pothole_detected": pothole,
+            "prediction": "pothole" if pothole else "no_pothole",
+            "confidence": float(confidence),
+            "raw_probability": float(prob)
+        }), 200
+
+    except Exception as e:
+        return jsonify({"Prediction Failed": str(e)}), 500
 
 
 @ai_bp.route("/gen/summary", methods=["POST"])
