@@ -1,0 +1,31 @@
+EMAIL TEMPLATE – REPORTING A POTHOLE / REQUESTING REPAIR (CITY OF TORONTO)
+
+Subject: Pothole Repair Request – [Street / Intersection]
+
+Dear City of Toronto Road Maintenance Team,
+
+I would like to report a pothole that requires repair.
+
+Location of pothole:
+- Street name: [Insert street]
+- Closest intersection or address: [Insert intersection]
+- Direction of travel / lane (optional): [Insert details]
+
+Description:
+[Brief description of the pothole size, depth, number of potholes, or any safety concerns.]
+
+Date and time first noticed:
+[Insert date/time]
+
+Additional details (optional):
+- Photos attached: [Yes/No]
+- Issue affecting traffic flow or safety: [Explain if needed]
+
+Please arrange for inspection and repair at your earliest convenience.
+
+Thank you for your work maintaining our roads.
+
+Sincerely,  
+[Your Name]  
+[Phone number]  
+[Email address]
