@@ -11,3 +11,6 @@ langgraph
 langchain-google-genai
 google-genai
 dotenv
+torchvision
+opencv-python
+pandas
