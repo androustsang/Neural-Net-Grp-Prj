@@ -1,8 +1,8 @@
+from flask import Blueprint, request, jsonify, current_app # To access app context (current_app)
+from services.yolo_service import process_yolo_prediction # To process YOLO predictions
 
-from flask import Blueprint, request, jsonify
 
-
-# for Yehor and Maaz 
+# for Yehor and Maaz
 # from ml.model import run_classification
 # from services.gemini_service import summarize_prediction
 
@@ -32,13 +32,41 @@ def predict():
     if not file or file.filename == "":
         return jsonify({"error": "Empty file."}), 400
 
-  
-    return jsonify(
-        {
-            "message": "Backend route is working. "
-                       "CNN prediction is not wired yet. (Yehor's part)"
-        }
-    ), 501  # 501 = Not Implemented
+    try:
+        # 1. Get the model from the global app context
+        # (This was set up in app.py in the previous step)
+        yolo_model = current_app.extensions["ml_models"]["yolo"]
+
+        # 2. Pass the model and the file to our custom service
+        # This function handles the "pass", counting, and image drawing
+        prediction_result = process_yolo_prediction(yolo_model, file)
+
+        # 3. Return the clean JSON
+        return (
+            jsonify(
+                {
+                    "message": "Prediction successful",
+                    "pothole_count": prediction_result["count"],
+                    "annotated_image": prediction_result[
+                        "image_data"
+                    ],  # The image is here!
+                    "cnn_result": "Pending implementation",
+                }
+            ),
+            200,
+        )
+
+    except Exception as e:
+        # Good practice: Print the error to your console so you can debug
+        print(f"Error during prediction: {e}")
+        return jsonify({"error": "Internal processing error"}), 500
+
+    # return jsonify(
+    #     {
+    #         "message": "Backend route is working. "
+    #                    "CNN prediction is not wired yet. (Yehor's part)"
+    #     }
+    # ), 501  # 501 = Not Implemented
 
 
 @ai_bp.route("/gen/summary", methods=["POST"])
@@ -76,9 +104,12 @@ def gen_summary():
     #   summary_text = summarize_prediction(prediction, float(confidence), extra_context)
     #   return jsonify({"summary": summary_text}), 200
 
-    return jsonify(
-        {
-            "message": "Backend route is working. "
-                       "Gemini summary is not wired yet. (Maaz's part)"
-        }
-    ), 501
+    return (
+        jsonify(
+            {
+                "message": "Backend route is working. "
+                "Gemini summary is not wired yet. (Maaz's part)"
+            }
+        ),
+        501,
+    )

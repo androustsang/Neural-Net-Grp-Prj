@@ -1,2 +1,8 @@
 .env
 .venv
+# Ignore all pycache folders anywhere in the project
+__pycache__/
+
+# Ignore specific compiled python files
+*.py[cod]
+*$py.class
