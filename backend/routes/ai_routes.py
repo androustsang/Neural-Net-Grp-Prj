@@ -89,12 +89,29 @@ def predict():
         pothole = prob >= 0.8
         confidence = prob if pothole else (1 - prob)
 
-        return jsonify({
+        result = {
             "pothole_detected": pothole,
             "prediction": "pothole" if pothole else "no_pothole",
             "confidence": float(confidence),
             "raw_probability": float(prob)
-        }), 200
+        }
+
+        main_path = "/Users/egor/Documents/GitHub"
+        ddta_path = os.path.join(main_path, "Neural-Net-Grp-Prj/backend/data")
+        predictions_dir = os.path.join(os.path.dirname(__file__), "/Users/egor/Documents/GitHub/Neural-Net-Grp-Prj/backend/data")
+        os.makedirs(predictions_dir, exist_ok=True)
+
+        # filename same as image but .txt
+        base_name = os.path.splitext(file.filename)[0]
+        save_path = os.path.join(predictions_dir, f"{base_name}.txt")
+
+        with open(save_path, "w") as f:
+            for key, value in result.items():
+                f.write(f"{key}: {value}\n")
+
+        print(f"Saved prediction to {save_path}")
+
+        return jsonify(result), 200
 
     except Exception as e:
         return jsonify({"Prediction Failed": str(e)}), 500
