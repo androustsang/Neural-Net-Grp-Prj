@@ -1,0 +1,126 @@
+--- Prediction for 107_jpg.rf.57671f8cef3462b86e014332373edd79.jpg at 2025-12-08 03:40:52 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for 141_jpg.rf.ab0d95a9838f4a1f855c38a158a871ce.jpg at 2025-12-08 03:42:27 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for 141_jpg.rf.ab0d95a9838f4a1f855c38a158a871ce.jpg at 2025-12-08 03:42:37 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for 141_jpg.rf.ab0d95a9838f4a1f855c38a158a871ce.jpg at 2025-12-08 03:42:37 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for -3-CAR~1.JPG at 2025-12-08 03:42:46 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9999785423278809
+raw_probability: 0.9999785423278809
+
+--- Prediction for -3-CAR~1.JPG at 2025-12-08 03:42:47 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9999785423278809
+raw_probability: 0.9999785423278809
+
+--- Prediction for -3-CAR~1.JPG at 2025-12-08 03:42:47 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9999785423278809
+raw_probability: 0.9999785423278809
+
+--- Prediction for DASH-CAM-2016-01-29-42-Miles-of-Potholes-_mp4-0215_jpg.rf.61cff1b2869f57102ad8c5a2f8adb9ba.jpg at 2025-12-08 03:43:03 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for DASH-CAM-2016-01-29-42-Miles-of-Potholes-_mp4-0215_jpg.rf.61cff1b2869f57102ad8c5a2f8adb9ba.jpg at 2025-12-08 03:43:04 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for DASH-CAM-2016-01-29-42-Miles-of-Potholes-_mp4-0140_jpg.rf.4c5588dbcedd17496073272ef11d911b.jpg at 2025-12-08 03:43:11 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for DASH-CAM-2016-01-29-42-Miles-of-Potholes-_mp4-0288_jpg.rf.0cba0ccd07ac527e55613c3301a55703.jpg at 2025-12-08 03:43:16 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for YI-SMA~2.JPG at 2025-12-08 03:43:20 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9837408661842346
+raw_probability: 0.9837408661842346
+
+--- Prediction for 0149_jpg.rf.f89e5b8de933145d4d8a6654b5c84db6.jpg at 2025-12-08 03:43:31 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.993063747882843
+raw_probability: 0.993063747882843
+
+--- Prediction for AM_sunny_CI04_20211008_093122_453_3_jpg.rf.aa433a0ca5eb4581e75fdd35c0d9f416.jpg at 2025-12-08 03:43:35 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9999969005584717
+raw_probability: 0.9999969005584717
+
+--- Prediction for DASH_CAM_2016_01_29_-42_Miles_of_Potholes-_mp4-6_jpg.rf.43763e5223fd470847e95dafdd4556ac.jpg at 2025-12-08 03:43:41 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for DASH_CAM_2016_01_29_-42_Miles_of_Potholes-_mp4-83_jpg.rf.ed705f7da821279c640772b5bcb10a72.jpg at 2025-12-08 03:43:45 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for AM_sunny_CI04_20211014_093601_1556_3_jpg.rf.a5b71815917db3f5a243b27f35c90292.jpg at 2025-12-08 03:44:01 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9999998807907104
+raw_probability: 0.9999998807907104
+
+--- Prediction for DASH-CAM-2016-01-29-42-Miles-of-Potholes-_mp4-0232_jpg.rf.aa977d4f401c6bbd76b98cd0edf67aa1.jpg at 2025-12-08 03:44:36 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for AM_sunny_CI04_20211013_101138_214_3_jpg.rf.22ea090fdfce6182609aa0f389451318.jpg at 2025-12-08 03:44:42 ---
+pothole_detected: True
+prediction: pothole
+confidence: 1.0
+raw_probability: 1.0
+
+--- Prediction for videoplayback-1-_mp4-0047_jpg.rf.7f8424e1dc57143426cc1c37e1fd7067.jpg at 2025-12-08 03:44:49 ---
+pothole_detected: False
+prediction: no_pothole
+confidence: 0.9882220849394798
+raw_probability: 0.011777915060520172
+
+--- Prediction for videoplayback-1-_mp4-0047_jpg.rf.7f8424e1dc57143426cc1c37e1fd7067.jpg at 2025-12-08 03:44:51 ---
+pothole_detected: False
+prediction: no_pothole
+confidence: 0.9882220849394798
+raw_probability: 0.011777915060520172
+

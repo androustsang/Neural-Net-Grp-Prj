@@ -51,12 +51,6 @@ export default function ResultsDisplay({ results, loading, error }) {
             </Alert>
             {(results.annotatedImage || results.originalImage) && (
               <div className="text-center">
-                <p className="text-muted mb-2">
-                  <small>
-                    <Badge bg="secondary" className="me-2">Demo Mode</Badge>
-                    Uploaded image displayed below (bounding box visualization requires backend)
-                  </small>
-                </p>
                 <img
                   src={results.annotatedImage ? `data:image/jpeg;base64,${results.annotatedImage}` : results.originalImage}
                   alt="Analyzed road surface"

@@ -1,4 +1,5 @@
 import os
+from datetime import datetime
 import torch
 import torch.nn as nn
 from torchvision import transforms
@@ -96,20 +97,20 @@ def predict():
             "raw_probability": float(prob)
         }
 
-        main_path = "/Users/egor/Documents/GitHub"
-        ddta_path = os.path.join(main_path, "Neural-Net-Grp-Prj/backend/data")
-        predictions_dir = os.path.join(os.path.dirname(__file__), "/Users/egor/Documents/GitHub/Neural-Net-Grp-Prj/backend/data")
+        predictions_dir = os.path.join(os.path.dirname(__file__), "../data")
         os.makedirs(predictions_dir, exist_ok=True)
 
-        # filename same as image but .txt
-        base_name = os.path.splitext(file.filename)[0]
-        save_path = os.path.join(predictions_dir, f"{base_name}.txt")
+        # Append to a single log file
+        save_path = os.path.join(predictions_dir, "predictions_log.txt")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
-        with open(save_path, "w") as f:
+        with open(save_path, "a") as f:
+            f.write(f"--- Prediction for {file.filename} at {timestamp} ---\n")
             for key, value in result.items():
                 f.write(f"{key}: {value}\n")
+            f.write("\n")
 
-        print(f"Saved prediction to {save_path}")
+        print(f"Appended prediction to {save_path}")
 
         return jsonify(result), 200
 
