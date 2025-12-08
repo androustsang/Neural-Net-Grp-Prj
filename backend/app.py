@@ -1,3 +1,4 @@
+import cv2    # Needed for image processing and it needs to be first line to avoid conflicts
 from flask import Flask, jsonify
 from flask_cors import CORS
 
