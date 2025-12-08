@@ -1,3 +1,4 @@
+# for Yehor and Maaz
 import os
 from datetime import datetime
 import torch
@@ -7,8 +8,11 @@ from PIL import Image
 import numpy as np
 import cv2
 
-from flask import Blueprint, request, jsonify
-
+##########################################################################
+### Modifying these two imports to access app context and yolo service ####
+from flask import Blueprint, request, jsonify, current_app      # To access app context (current_app)
+from services.yolo_service import process_yolo_prediction       # To process YOLO predictions
+##########################################################################
 
 from ml.model import CNNClassifier
 
@@ -69,6 +73,44 @@ def predict():
     if not file or file.filename == "":
         return jsonify({"error": "Empty file."}), 400
     
+    #########################################################################
+    #### NEW CODE BLOCK FOR YOLO INFERENCE USING GLOBAL MODEL CONTEXT #######
+    ##########################################################################
+    try:
+        # 1. Get the model from the global app context
+        # (This was set up in app.py in the previous step)
+        yolo_model = current_app.extensions["ml_models"]["yolo"]
+
+        # 2. Pass the model and the file to our custom service
+        # This function handles the "pass", counting, and image drawing
+        yolo_prediction_result = process_yolo_prediction(yolo_model, file)
+
+        # 3. Just store the results first and Return the clean JSON later together with CNN result
+        # return (
+        #     jsonify(
+        #         {
+        #             "message": "Prediction successful",
+        #             "pothole_count": yolo_prediction_result["count"],
+        #             "annotated_image": yolo_prediction_result[
+        #                 "image_data"
+        #             ],  # The image is here!
+        #             "cnn_result": "Pending implementation",
+        #         }
+        #     ),
+        #     200,
+        # )
+
+    except Exception as e:
+        # Good practice: Print the error to your console so you can debug
+        print(f"Error during prediction: {e}")
+        return jsonify({"error": "Internal processing error"}), 500
+    ########################################################################
+    #### END OF NEW CODE BLOCK FOR YOLO INFERENCE USING GLOBAL MODEL CONTEXT ###
+    ########################################################################
+
+    # --- ADD THIS LINE HERE ---
+    file.seek(0) # <--- IMPORTANT: Reset cursor to start for the next read
+
     try:
         # Load image with OpenCV (your dataset uses cv2)
         file_bytes = np.frombuffer(file.read(), np.uint8)
@@ -90,7 +132,7 @@ def predict():
         pothole = prob >= 0.8
         confidence = prob if pothole else (1 - prob)
 
-        result = {
+        cnn_result = {
             "pothole_detected": pothole,
             "prediction": "pothole" if pothole else "no_pothole",
             "confidence": float(confidence),
@@ -106,17 +148,33 @@ def predict():
 
         with open(save_path, "a") as f:
             f.write(f"--- Prediction for {file.filename} at {timestamp} ---\n")
-            for key, value in result.items():
+            for key, value in cnn_result.items():
                 f.write(f"{key}: {value}\n")
             f.write("\n")
 
         print(f"Appended prediction to {save_path}")
 
-        return jsonify(result), 200
+        # return jsonify(cnn_result), 200  # Store the result for later return together with YOLO result
 
     except Exception as e:
         return jsonify({"Prediction Failed": str(e)}), 500
 
+    #######################################################
+    ###### Return both YOLO and CNN results together ######
+    #######################################################
+    return (
+        jsonify(
+            {
+                "message": "Prediction successful",
+                "pothole_count": yolo_prediction_result["count"],
+                "annotated_image": yolo_prediction_result[
+                    "image_data"
+                ],  # The image is here!
+                "cnn_result": cnn_result,
+            }
+        ),
+        200,
+    )
 
 @ai_bp.route("/gen/summary", methods=["POST"])
 def gen_summary():
@@ -153,9 +211,12 @@ def gen_summary():
     #   summary_text = summarize_prediction(prediction, float(confidence), extra_context)
     #   return jsonify({"summary": summary_text}), 200
 
-    return jsonify(
-        {
-            "message": "Backend route is working. "
-                       "Gemini summary is not wired yet. (Maaz's part)"
-        }
-    ), 501
+    return (
+        jsonify(
+            {
+                "message": "Backend route is working. "
+                "Gemini summary is not wired yet. (Maaz's part)"
+            }
+        ),
+        501,
+    )

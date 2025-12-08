@@ -1,4 +1,5 @@
 --- Prediction for 107_jpg.rf.57671f8cef3462b86e014332373edd79.jpg at 2025-12-08 03:40:52 ---
+--- Prediction for demo001.jpg at 2025-12-08 05:14:46 ---
 pothole_detected: True
 prediction: pothole
 confidence: 1.0
@@ -123,4 +124,15 @@ pothole_detected: False
 prediction: no_pothole
 confidence: 0.9882220849394798
 raw_probability: 0.011777915060520172
+--- Prediction for negative_demo003.jpg at 2025-12-08 05:15:07 ---
+pothole_detected: False
+prediction: no_pothole
+confidence: 0.9999585351069982
+raw_probability: 4.1464893001830205e-05
+
+--- Prediction for demo002.jpg at 2025-12-08 05:15:23 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9995447993278503
+raw_probability: 0.9995447993278503
 
