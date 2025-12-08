@@ -39,8 +39,11 @@ export default function ResultsDisplay({ results, loading, error }) {
     <Card className="fade-in">
       <Card.Header as="h5" className="d-flex justify-content-between align-items-center">
         <span>{results.hasPothole ? "🔴 Pothole Detected!" : "✅ No Potholes Detected"}</span>
-        <Badge bg="light" text="dark" className="fs-6">
+        <Badge bg="light" text="dark" className="fs-6 me-2">
           {(results.confidence * 100).toFixed(1)}% Confidence
+        </Badge>
+        <Badge bg="danger" className="fs-6">
+          {results.count} Potholes
         </Badge>
       </Card.Header>
       <Card.Body>
@@ -52,7 +55,7 @@ export default function ResultsDisplay({ results, loading, error }) {
             {(results.annotatedImage || results.originalImage) && (
               <div className="text-center">
                 <img
-                  src={results.annotatedImage ? `data:image/jpeg;base64,${results.annotatedImage}` : results.originalImage}
+                  src={results.annotatedImage ? results.annotatedImage : results.originalImage}
                   alt="Analyzed road surface"
                   style={{
                     width: "100%",

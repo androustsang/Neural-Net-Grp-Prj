@@ -31,11 +31,13 @@ export default function PotholeDetector() {
             // Read the original image for display
             const reader = new FileReader()
             reader.onloadend = () => {
+                const cnn = data.cnn_result || {}
                 setResults({
-                    hasPothole: data.prediction === "pothole",
-                    annotatedImage: null, // Backend doesn't return annotated image yet
-                    confidence: data.confidence,
+                    hasPothole: cnn.prediction === "pothole",
+                    annotatedImage: data.annotated_image || null,
+                    confidence: cnn.confidence,
                     originalImage: reader.result,
+                    count: data.pothole_count || 0
                 })
                 setLoading(false)
             }

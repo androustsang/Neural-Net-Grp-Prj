@@ -34,20 +34,13 @@ def process_yolo_prediction(model, file_storage):
 
     # Setup Annotators
     # You can customize thickness, text_scale, and colors here
-    box_annotator = sv.BoxAnnotator()
-    label_annotator = sv.LabelAnnotator()
-
+    box_annotator = sv.BoxAnnotator(color=sv.Color.RED)
+    
     # Create a copy of the image to draw on (scene=...)
     annotated_image = image.copy()
 
     # Draw Boxes
     annotated_image = box_annotator.annotate(
-        scene=annotated_image, 
-        detections=detections
-    )
-    
-    # Draw Labels (e.g., "pothole 0.85")
-    annotated_image = label_annotator.annotate(
         scene=annotated_image, 
         detections=detections
     )

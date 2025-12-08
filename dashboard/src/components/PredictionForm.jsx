@@ -5,7 +5,7 @@ export default function PredictionForm({ onSubmit, loading }) {
   const [imageFile, setImageFile] = useState(null)
   const [imagePreview, setImagePreview] = useState(null)
   const [error, setError] = useState("")
-  const [box, setBox] = useState({ x: 0, y: 0, w: 100, h: 100 })
+
   const imgRef = useRef(null)
   const [imgLoaded, setImgLoaded] = useState(false)
 
@@ -37,7 +37,7 @@ export default function PredictionForm({ onSubmit, loading }) {
     setImageFile(null)
     setImagePreview(null)
     setImgLoaded(false)
-    setBox({ x: 0, y: 0, w: 100, h: 100 })
+
     setError("")
     document.getElementById("imageFile").value = ""
   }
@@ -63,7 +63,7 @@ export default function PredictionForm({ onSubmit, loading }) {
           </Form.Group>
 
           {imagePreview && (
-            <div className="mb-3">
+            <div className="mb-3 text-center">
               <div className="position-relative d-inline-block" style={{ width: "100%", maxWidth: "640px" }}>
                 <img
                   ref={imgRef}
@@ -78,71 +78,10 @@ export default function PredictionForm({ onSubmit, loading }) {
                   }}
                   className="shadow-sm"
                 />
-                {imgLoaded && imgRef.current && (
-                  <div
-                    style={{
-                      position: "absolute",
-                      border: "3px solid #ff0000ff",
-                      backgroundColor: "rgba(255, 0, 0, 0.2)",
-                      left: `${(box.x / 640) * imgRef.current.clientWidth}px`,
-                      top: `${(box.y / 640) * imgRef.current.clientHeight}px`,
-                      width: `${(box.w / 640) * imgRef.current.clientWidth}px`,
-                      height: `${(box.h / 640) * imgRef.current.clientHeight}px`,
-                      pointerEvents: "none"
-                    }}
-                  />
-                )}
+
               </div>
 
-              <div className="mt-3 p-3 bg-dark bg-opacity-10 rounded border border-secondary">
-                <h6 className="mb-2">Manual Box Coordinates (Standard 640x640)</h6>
-                <div className="row g-2">
-                  <div className="col-3">
-                    <Form.Group controlId="boxX">
-                      <Form.Label className="small mb-1">X</Form.Label>
-                      <Form.Control
-                        type="number"
-                        value={box.x}
-                        onChange={(e) => setBox({ ...box, x: Number(e.target.value) })}
-                        size="sm"
-                      />
-                    </Form.Group>
-                  </div>
-                  <div className="col-3">
-                    <Form.Group controlId="boxY">
-                      <Form.Label className="small mb-1">Y</Form.Label>
-                      <Form.Control
-                        type="number"
-                        value={box.y}
-                        onChange={(e) => setBox({ ...box, y: Number(e.target.value) })}
-                        size="sm"
-                      />
-                    </Form.Group>
-                  </div>
-                  <div className="col-3">
-                    <Form.Group controlId="boxW">
-                      <Form.Label className="small mb-1">Width</Form.Label>
-                      <Form.Control
-                        type="number"
-                        value={box.w}
-                        onChange={(e) => setBox({ ...box, w: Number(e.target.value) })}
-                        size="sm"
-                      />
-                    </Form.Group>
-                  </div>
-                  <div className="col-3">
-                    <Form.Group controlId="boxH">
-                      <Form.Label className="small mb-1">Height</Form.Label>
-                      <Form.Control
-                        type="number"
-                        value={box.h}
-                        onChange={(e) => setBox({ ...box, h: Number(e.target.value) })}
-                        size="sm"
-                      />
-                    </Form.Group>
-                  </div>
-                </div>
-              </div>
+
             </div>
           )}
 
