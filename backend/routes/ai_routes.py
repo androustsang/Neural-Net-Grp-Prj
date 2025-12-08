@@ -1,13 +1,54 @@
-from flask import Blueprint, request, jsonify, current_app # To access app context (current_app)
-from services.yolo_service import process_yolo_prediction # To process YOLO predictions
-
-
 # for Yehor and Maaz
+import os
+from datetime import datetime
+import torch
+import torch.nn as nn
+from torchvision import transforms
+from PIL import Image
+import numpy as np
+import cv2
+
+##########################################################################
+### Modifying these two imports to access app context and yolo service ####
+from flask import Blueprint, request, jsonify, current_app      # To access app context (current_app)
+from services.yolo_service import process_yolo_prediction       # To process YOLO predictions
+##########################################################################
+
+from ml.model import CNNClassifier
+
+# for Yehor and Maaz 
 # from ml.model import run_classification
 # from services.gemini_service import summarize_prediction
 
 ai_bp = Blueprint("ai_routes", __name__)
 
+MODEL_PATH = os.path.join(
+    os.path.dirname(__file__),
+    "../ml/models/binary_classifier_weighted.pth"
+)
+
+
+device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+
+model = CNNClassifier().to(device)
+
+if os.path.exists(MODEL_PATH):
+    model.load_state_dict(torch.load(MODEL_PATH, map_location=device))
+    model.eval()
+    print(f"Loaded trained classifier from {MODEL_PATH}")
+else:
+    print(f"MODEL NOT FOUND at {MODEL_PATH}")
+    
+def preprocess_numpy(np_img):
+    """
+    Input: numpy array BGR (from cv2)
+    Output: PyTorch tensor normalized & shaped like training data
+    """
+    img = cv2.resize(np_img, (224, 224))
+    img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+    img = img.astype(np.float32) / 255.0
+    img = np.transpose(img, (2, 0, 1))
+    return torch.tensor(img, dtype=torch.float32).unsqueeze(0)
 
 @ai_bp.route("/predict", methods=["POST"])
 def predict():
@@ -31,7 +72,10 @@ def predict():
     # 2) Check if filename is not empty.
     if not file or file.filename == "":
         return jsonify({"error": "Empty file."}), 400
-
+    
+    #########################################################################
+    #### NEW CODE BLOCK FOR YOLO INFERENCE USING GLOBAL MODEL CONTEXT #######
+    ##########################################################################
     try:
         # 1. Get the model from the global app context
         # (This was set up in app.py in the previous step)
@@ -39,35 +83,98 @@ def predict():
 
         # 2. Pass the model and the file to our custom service
         # This function handles the "pass", counting, and image drawing
-        prediction_result = process_yolo_prediction(yolo_model, file)
+        yolo_prediction_result = process_yolo_prediction(yolo_model, file)
 
-        # 3. Return the clean JSON
-        return (
-            jsonify(
-                {
-                    "message": "Prediction successful",
-                    "pothole_count": prediction_result["count"],
-                    "annotated_image": prediction_result[
-                        "image_data"
-                    ],  # The image is here!
-                    "cnn_result": "Pending implementation",
-                }
-            ),
-            200,
-        )
+        # 3. Just store the results first and Return the clean JSON later together with CNN result
+        # return (
+        #     jsonify(
+        #         {
+        #             "message": "Prediction successful",
+        #             "pothole_count": yolo_prediction_result["count"],
+        #             "annotated_image": yolo_prediction_result[
+        #                 "image_data"
+        #             ],  # The image is here!
+        #             "cnn_result": "Pending implementation",
+        #         }
+        #     ),
+        #     200,
+        # )
 
     except Exception as e:
         # Good practice: Print the error to your console so you can debug
         print(f"Error during prediction: {e}")
         return jsonify({"error": "Internal processing error"}), 500
+    ########################################################################
+    #### END OF NEW CODE BLOCK FOR YOLO INFERENCE USING GLOBAL MODEL CONTEXT ###
+    ########################################################################
 
-    # return jsonify(
-    #     {
-    #         "message": "Backend route is working. "
-    #                    "CNN prediction is not wired yet. (Yehor's part)"
-    #     }
-    # ), 501  # 501 = Not Implemented
+    # --- ADD THIS LINE HERE ---
+    file.seek(0) # <--- IMPORTANT: Reset cursor to start for the next read
 
+    try:
+        # Load image with OpenCV (your dataset uses cv2)
+        file_bytes = np.frombuffer(file.read(), np.uint8)
+        img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
+
+        if img is None:
+            return jsonify({"error": "Invalid image format."}), 400
+
+        # Preprocess for model
+        tensor = preprocess_numpy(img).to(device)
+
+        # Inference
+        with torch.no_grad():
+            logits = model(tensor)
+            prob = torch.sigmoid(logits).item()
+            
+        print(prob)
+
+        pothole = prob >= 0.8
+        confidence = prob if pothole else (1 - prob)
+
+        cnn_result = {
+            "pothole_detected": pothole,
+            "prediction": "pothole" if pothole else "no_pothole",
+            "confidence": float(confidence),
+            "raw_probability": float(prob)
+        }
+
+        predictions_dir = os.path.join(os.path.dirname(__file__), "../data")
+        os.makedirs(predictions_dir, exist_ok=True)
+
+        # Append to a single log file
+        save_path = os.path.join(predictions_dir, "predictions_log.txt")
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        with open(save_path, "a") as f:
+            f.write(f"--- Prediction for {file.filename} at {timestamp} ---\n")
+            for key, value in cnn_result.items():
+                f.write(f"{key}: {value}\n")
+            f.write("\n")
+
+        print(f"Appended prediction to {save_path}")
+
+        # return jsonify(cnn_result), 200  # Store the result for later return together with YOLO result
+
+    except Exception as e:
+        return jsonify({"Prediction Failed": str(e)}), 500
+
+    #######################################################
+    ###### Return both YOLO and CNN results together ######
+    #######################################################
+    return (
+        jsonify(
+            {
+                "message": "Prediction successful",
+                "pothole_count": yolo_prediction_result["count"],
+                "annotated_image": yolo_prediction_result[
+                    "image_data"
+                ],  # The image is here!
+                "cnn_result": cnn_result,
+            }
+        ),
+        200,
+    )
 
 @ai_bp.route("/gen/summary", methods=["POST"])
 def gen_summary():
