@@ -1,4 +1,4 @@
-# for Yehor and Maaz
+# Maaz Bobat, Saaram Rashidi, MD Sazid, Sun Hung Tsang, Yehor Valesiuk
 import os
 from datetime import datetime
 import torch
@@ -10,21 +10,26 @@ import cv2
 
 ##########################################################################
 ### Modifying these two imports to access app context and yolo service ####
-from flask import Blueprint, request, jsonify, current_app      # To access app context (current_app)
-from services.yolo_service import process_yolo_prediction       # To process YOLO predictions
+from flask import (
+    Blueprint,
+    request,
+    jsonify,
+    current_app,
+)  # To access app context (current_app)
+from services.yolo_service import process_yolo_prediction  # To process YOLO predictions
+
 ##########################################################################
 
 from ml.model import CNNClassifier
 
-# for Yehor and Maaz 
+# for Yehor and Maaz
 # from ml.model import run_classification
 # from services.gemini_service import summarize_prediction
 
 ai_bp = Blueprint("ai_routes", __name__)
 
 MODEL_PATH = os.path.join(
-    os.path.dirname(__file__),
-    "../ml/models/binary_classifier_weighted.pth"
+    os.path.dirname(__file__), "../ml/models/binary_classifier_weighted.pth"
 )
 
 
@@ -38,7 +43,8 @@ if os.path.exists(MODEL_PATH):
     print(f"Loaded trained classifier from {MODEL_PATH}")
 else:
     print(f"MODEL NOT FOUND at {MODEL_PATH}")
-    
+
+
 def preprocess_numpy(np_img):
     """
     Input: numpy array BGR (from cv2)
@@ -49,6 +55,7 @@ def preprocess_numpy(np_img):
     img = img.astype(np.float32) / 255.0
     img = np.transpose(img, (2, 0, 1))
     return torch.tensor(img, dtype=torch.float32).unsqueeze(0)
+
 
 @ai_bp.route("/predict", methods=["POST"])
 def predict():
@@ -72,7 +79,7 @@ def predict():
     # 2) Check if filename is not empty.
     if not file or file.filename == "":
         return jsonify({"error": "Empty file."}), 400
-    
+
     #########################################################################
     #### NEW CODE BLOCK FOR YOLO INFERENCE USING GLOBAL MODEL CONTEXT #######
     ##########################################################################
@@ -108,11 +115,10 @@ def predict():
     #### END OF NEW CODE BLOCK FOR YOLO INFERENCE USING GLOBAL MODEL CONTEXT ###
     ########################################################################
 
-    # --- ADD THIS LINE HERE ---
-    file.seek(0) # <--- IMPORTANT: Reset cursor to start for the next read
+    file.seek(0)  # <Reset cursor to start for the next read
 
     try:
-        # Load image with OpenCV (your dataset uses cv2)
+        # Load image with OpenCV
         file_bytes = np.frombuffer(file.read(), np.uint8)
         img = cv2.imdecode(file_bytes, cv2.IMREAD_COLOR)
 
@@ -126,7 +132,7 @@ def predict():
         with torch.no_grad():
             logits = model(tensor)
             prob = torch.sigmoid(logits).item()
-            
+
         print(prob)
 
         pothole = prob >= 0.8
@@ -136,7 +142,7 @@ def predict():
             "pothole_detected": pothole,
             "prediction": "pothole" if pothole else "no_pothole",
             "confidence": float(confidence),
-            "raw_probability": float(prob)
+            "raw_probability": float(prob),
         }
 
         predictions_dir = os.path.join(os.path.dirname(__file__), "../data")
@@ -176,10 +182,11 @@ def predict():
         200,
     )
 
+
 @ai_bp.route("/gen/summary", methods=["POST"])
 def gen_summary():
     """
-    Placeholder endpoint for generating a natural-language summary.
+     endpoint for generating a natural-language summary.
 
     Expected final behaviour (after Maaz plugs in):
       - Method: POST
@@ -207,16 +214,11 @@ def gen_summary():
     except (TypeError, ValueError):
         return jsonify({"error": "Invalid or missing 'confidence'."}), 400
 
-    # Final behaviour (later):
+    # Final behaviour :
     #   summary_text = summarize_prediction(prediction, float(confidence), extra_context)
     #   return jsonify({"summary": summary_text}), 200
 
     return (
-        jsonify(
-            {
-                "message": "Backend route is working. "
-                "Gemini summary is not wired yet. (Maaz's part)"
-            }
-        ),
+        jsonify({"message": "Backend route is working. "}),
         501,
     )

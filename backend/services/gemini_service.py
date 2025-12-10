@@ -1,3 +1,4 @@
+# Maaz Bobat, Saaram Rashidi, MD Sazid, Sun Hung Tsang, Yehor Valesiuk
 import os
 from typing import TypedDict, List
 from dotenv import load_dotenv
@@ -215,7 +216,7 @@ def router_node(state: RAGState) -> RAGState:
     """
     try:
         # Using 2.0-flash for speed/cost
-        resp = client.models.generate_content(model="gemini-2.0-flash", contents=prompt)
+        resp = client.models.generate_content(model="gemini-2.5-flash", contents=prompt)
         decision = resp.text.strip().lower()
     except:
         decision = "retrieve"  # Default fallback
@@ -260,7 +261,17 @@ def generate_node(state: RAGState) -> RAGState:
 
     # Optimized Agentic Prompt
     prompt = f"""
-    You are a helpful and knowledgeable assistant.
+    You are a helpful and concise assistant.
+    # SPECIAL CASE: LOG FILE QUERIES
+    If the user is asking about a specific image filename (e.g., "pothole_2331.jpg" or "is there a pothole in X.jpg"):
+    1. Search the RETRIEVED CONTEXT for that EXACT filename
+    2. Look for the structured format:
+       --- Prediction for <FILENAME> at <TIMESTAMP> ---
+       pothole_detected: True/False
+       prediction: pothole/no_pothole
+       confidence: <number>
+    3. Extract and clearly state: "Image [filename]: pothole_detected = [True/False], confidence = [value]"
+    4. If the filename is NOT in the context, state: "No prediction found for [filename] in the logs."
 
     # ROLE
     Your goal is to provide accurate answers by synthesizing information from the provided conversation history, retrieved local context, and external Google Search results if necessary.
@@ -280,12 +291,15 @@ def generate_node(state: RAGState) -> RAGState:
     3. **FALLBACK**: If the local context is empty, irrelevant, or does not fully answer the question, YOU MUST use the Google Search tool to find the missing information.
     4. **COMBINE**: If the local context only answers part of the question, use Google Search to fill in the details, then combine both sources into a single cohesive response.
     5. **STYLE**: Be clear, concise, and professional.
-
+    
+    6. Do NOT add extra tips, explanations, or background information that the user did not request.
     Answer:
+    7. Before finalizing, review your answer and ensure it is concise and does not repeat or duplicate the same information.
+    
     """
     try:
         response = client.models.generate_content(
-            model="gemini-2.0-flash",  # Or gemini-2.5-flash if available
+            model="gemini-2.5-flash",  # Or gemini-2.5-flash if available
             contents=prompt,
             config=generate_config,
         )

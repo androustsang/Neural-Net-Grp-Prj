@@ -1,3 +1,4 @@
+# Maaz Bobat, Saaram Rashidi, MD Sazid, Sun Hung Tsang, Yehor Valesiuk
 import pandas as pd
 import os
 import cv2
@@ -8,6 +9,7 @@ import torch.optim as optim
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
+
 
 class CNNClassifier(nn.Module):
     def __init__(self):
@@ -31,7 +33,9 @@ class CNNClassifier(nn.Module):
         self.pool = nn.MaxPool2d(2)
 
         # Dense layers
-        self.fc1 = nn.Linear(128 * 28 * 28, 64)  # Because 640→320→160→80 after three pools and 224→112→56→28 
+        self.fc1 = nn.Linear(
+            128 * 28 * 28, 64
+        )  # Because 640→320→160→80 after three pools and 224→112→56→28
         self.fc2 = nn.Linear(64, 32)
         self.fc3 = nn.Linear(32, 1)
 
@@ -60,4 +64,3 @@ class CNNClassifier(nn.Module):
         x = F.dropout(x, p=0.5, training=self.training)
 
         return self.fc3(x)
-

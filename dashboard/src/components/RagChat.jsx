@@ -1,3 +1,4 @@
+{/* Maaz Bobat, Saaram Rashidi, MD Sazid, Sun Hung Tsang, Yehor Valesiuk*/ }
 import { useState, useRef, useEffect } from "react"
 import { Container } from "react-bootstrap"
 import "../styles/RagChat.css"
@@ -28,7 +29,7 @@ export default function RagChat() {
         setLoading(true)
 
         try {
-            const response = await fetch("/api/chat", {
+            const response = await fetch("/rag/chat", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({

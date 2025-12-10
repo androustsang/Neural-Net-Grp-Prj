@@ -382,3 +382,21 @@ prediction: pothole
 confidence: 0.9999853372573853
 raw_probability: 0.9999853372573853
 
+--- Prediction for pothole_01.jpg at 2025-12-09 17:10:37 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9987965822219849
+raw_probability: 0.9987965822219849
+
+--- Prediction for pothole_01.jpg at 2025-12-09 19:34:16 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9987965822219849
+raw_probability: 0.9987965822219849
+
+--- Prediction for pothole_01.jpg at 2025-12-10 13:56:45 ---
+pothole_detected: True
+prediction: pothole
+confidence: 0.9987965822219849
+raw_probability: 0.9987965822219849
+

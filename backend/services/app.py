@@ -1,3 +1,4 @@
+# Maaz Bobat, Saaram Rashidi, MD Sazid, Sun Hung Tsang, Yehor Valesiuk
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from gemini_service import get_rag_graph
@@ -10,7 +11,7 @@ graph = get_rag_graph()
 qa_graph = graph.compile()
 
 
-@app.route("/api/chat", methods=["POST"])
+@app.route("/rag/chat", methods=["POST"])
 def chat():
     """
     Endpoint to receive a question and invoke the RAG LangGraph workflow.
@@ -67,4 +68,4 @@ def chat():
 
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=8000)
