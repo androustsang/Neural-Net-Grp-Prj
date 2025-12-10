@@ -9,6 +9,7 @@ from routes.ai_routes import ai_bp
 
 import torch  # Needed for loading CNN and YOLO models
 from ultralytics import YOLO  # For YOLO model loading - object detection
+from ml.model import CNNClassifier
 
 
 def load_models():
@@ -20,16 +21,16 @@ def load_models():
     yolo_model = YOLO("ml/models/yolo_v12small_best.pt")
 
     # 2. Load CNN (Example logic)
-    # cnn_model = MyCustomCNN()
-    # cnn_model.load_state_dict(torch.load("ml/models/cnn_weights.pth", map_location='cpu'))
-    # cnn_model.eval()
+    cnn_model = CNNClassifier()
+    cnn_model.load_state_dict(torch.load("ml/models/binary_classifier_weighted.pth", map_location='cpu'))
+    cnn_model.eval()
 
     print("Models loaded successfully.")
 
     # Return a dictionary containing both
     return {
         "yolo": yolo_model,
-        "cnn": None,  # Replace with cnn_model variable when you have it
+        "cnn": cnn_model, 
     }
 
 
