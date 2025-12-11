@@ -59,7 +59,7 @@ export default function ResultsDisplay({ results, loading, error }) {
                   alt="Analyzed road surface"
                   style={{
                     width: "100%",
-                    maxHeight: "600px",
+                    maxHeight: "500px",
                     objectFit: "contain",
                     borderRadius: "8px"
                   }}
@@ -81,7 +81,7 @@ export default function ResultsDisplay({ results, loading, error }) {
                   alt="Analyzed road surface"
                   style={{
                     width: "100%",
-                    maxHeight: "600px",
+                    maxHeight: "500px",
                     objectFit: "contain",
                     borderRadius: "8px"
                   }}

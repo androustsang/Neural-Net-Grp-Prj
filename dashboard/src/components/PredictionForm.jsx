@@ -72,8 +72,9 @@ export default function PredictionForm({ onSubmit, loading }) {
                   onLoad={() => setImgLoaded(true)}
                   style={{
                     width: "100%",
+                    maxHeight: "500px",
                     aspectRatio: "1 / 1",
-                    objectFit: "fill",
+                    objectFit: "contain",
                     borderRadius: "8px"
                   }}
                   className="shadow-sm"

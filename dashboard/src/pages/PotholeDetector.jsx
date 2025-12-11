@@ -53,10 +53,10 @@ export default function PotholeDetector() {
     return (
         <Container fluid className="py-4 h-100">
             <Row className="h-100">
-                <Col lg={6} className="mb-3 mb-lg-0">
+                <Col lg={6} className="mb-3 mb-lg-0 h-100">
                     <PredictionForm onSubmit={handlePredictionSubmit} loading={loading} />
                 </Col>
-                <Col lg={6}>
+                <Col lg={6} className="h-100">
                     <ResultsDisplay results={results} loading={loading} error={error} />
                 </Col>
             </Row>
