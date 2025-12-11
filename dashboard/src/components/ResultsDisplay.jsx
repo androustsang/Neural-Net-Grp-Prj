@@ -47,7 +47,7 @@ export default function ResultsDisplay({ results, loading, error }) {
         </Badge>
       </Card.Header>
       <Card.Body>
-        {results.hasPothole ? (
+        {(results.hasPothole || results.count>0) ? (
           <>
             <Alert variant="warning" className="mb-3">
               <strong>⚠️ Attention:</strong> One or more potholes have been detected in this image.
