@@ -94,7 +94,7 @@ export default function RagChat() {
     }
 
     return (
-        <Container fluid className="py-4">
+        <Container fluid className="py-4 fade-in">
             <div className="ragchat-container">
                 <header className="ragchat-header">
                     <h1>Agentic RAG Assistant</h1>
